@@ -134,60 +134,60 @@ const statedNum = () => { const v=parseFloat(String(info["Stated Total (MYR)"]||
 $("xlsx").onclick=async()=>{
   if(typeof ExcelJS==="undefined"){alert("Excel library did not load (check internet), then try again.");return;}
   if(!items.length){alert("No lines to export.");return;}
-  const n=items.length;
+  const n=items.length, NC=6;                    // 6 columns: No., Description, Qty, UOM, Unit Price, Amount
+  const XHEAD=["No.","Description","Quantity","UOM","Unit Price (MYR)","Amount (MYR)"];
   const wb=new ExcelJS.Workbook();
   const ws=wb.addWorksheet("PO Items",{pageSetup:{
     paperSize:9, orientation:"portrait", fitToPage:true, fitToWidth:1, fitToHeight:0,
     horizontalCentered:true,
     margins:{left:0.3937008,right:0.3937008,top:0.3937008,bottom:0.3937008,header:0.2,footer:0.2}   // 1.0 cm on every side (Excel stores inches)
   }});
-  ws.columns=[{width:5},{width:12},{width:38},{width:11},{width:7},{width:6},{width:10},{width:11}];
+  ws.columns=[{width:6},{width:46},{width:10},{width:8},{width:15},{width:16}];
   const thin={style:"thin",color:{argb:"FF000000"}};
   const box={top:thin,left:thin,bottom:thin,right:thin};
   const font={name:"Arial",size:10};
-  const boxRange=(r,c1,c2)=>{for(let c=c1;c<=c2;c++){const cell=ws.getCell(r,c);cell.border=box;if(!cell.font||!cell.font.bold)cell.font=font;}};
+  const grey={type:"pattern",pattern:"solid",fgColor:{argb:"FFE9EDF1"}};
+  const boxRange=(r)=>{for(let c=1;c<=NC;c++)ws.getCell(r,c).border=box;};
 
   // --- PO details (boxed) ---
   const st=parseFloat(String(info["Stated Total (MYR)"]||"").replace(/,/g,""));
   const top=[["Order No.",info["Order No."]],["PR No.",info["PR No."]],["Date",info["Date"]],["Subject",info["Subject"]],["Stated Total (MYR)",isNaN(st)?"":st]];
   top.forEach((t,i)=>{
     const r=i+1;
-    ws.mergeCells(r,1,r,2); ws.mergeCells(r,3,r,8);
-    const l=ws.getCell(r,1); l.value=t[0]; l.font={...font,bold:true}; l.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFE9EDF1"}};
-    l.alignment={vertical:"middle"};
-    const v=ws.getCell(r,3); v.value=t[1]; v.alignment={horizontal:"left",vertical:"middle",wrapText:true};
+    ws.mergeCells(r,1,r,2); ws.mergeCells(r,3,r,NC);
+    const l=ws.getCell(r,1); l.value=t[0]; l.font={...font,bold:true}; l.fill=grey; l.alignment={vertical:"middle"};
+    const v=ws.getCell(r,3); v.value=t[1]; v.font=font; v.alignment={horizontal:"left",vertical:"middle",wrapText:true};
     if(typeof t[1]==="number") v.numFmt="#,##0.00";
-    boxRange(r,1,8);
+    boxRange(r);
   });
 
   // --- Items table (boxed) ---
-  const hdr=top.length+2;                       // one blank row between the blocks
-  HEAD.forEach((h,i)=>{
-    const c=ws.getCell(hdr,i+1); c.value=h;
-    c.font={...font,bold:true}; c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFE9EDF1"}};
+  const hdr=top.length+2;                        // one blank row between the blocks
+  XHEAD.forEach((h,i)=>{
+    const c=ws.getCell(hdr,i+1); c.value=h; c.font={...font,bold:true}; c.fill=grey;
     c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
   });
-  boxRange(hdr,1,8);
+  boxRange(hdr);
   items.forEach((it,i)=>{
     const r=hdr+1+i;
-    const vals=[+it.no||it.no,it.code,it.desc,it.date,+it.qty||0,it.uom,+it.price||0,+it.amt||0];
+    const vals=[+it.no||it.no,it.desc,+it.qty||0,it.uom,+it.price||0,+it.amt||0];
+    const al=["center","left","right","center","right","right"];
     vals.forEach((v,j)=>{
-      const c=ws.getCell(r,j+1); c.value=v;
-      c.alignment={vertical:"top",wrapText:true,horizontal:(j===0||j===1||j===3||j===5)?"center":(j>=4&&j!==5?"right":"left")};
+      const c=ws.getCell(r,j+1); c.value=v; c.font=font;
+      c.alignment={vertical:"top",wrapText:true,horizontal:al[j]};
     });
-    ws.getCell(r,5).numFmt="#,##0.##"; ws.getCell(r,7).numFmt="#,##0.00"; ws.getCell(r,8).numFmt="#,##0.00";
-    boxRange(r,1,8);
+    ws.getCell(r,3).numFmt="#,##0.##"; ws.getCell(r,5).numFmt="#,##0.00"; ws.getCell(r,6).numFmt="#,##0.00";
+    boxRange(r);
   });
   const tr=hdr+n+1, sum=items.reduce((s,i)=>s+(+i.amt||0),0);
-  ws.mergeCells(tr,1,tr,7);
+  ws.mergeCells(tr,1,tr,NC-1);
   const tl=ws.getCell(tr,1); tl.value="Total (MYR)"; tl.alignment={horizontal:"right",vertical:"middle"}; tl.font={...font,bold:true};
-  const tc=ws.getCell(tr,8); tc.value={formula:`SUM(H${hdr+1}:H${hdr+n})`,result:sum}; tc.numFmt="#,##0.00"; tc.font={...font,bold:true}; tc.alignment={horizontal:"right",vertical:"middle"};
-  boxRange(tr,1,8);
-  tl.font={...font,bold:true}; tc.font={...font,bold:true};
+  const tc=ws.getCell(tr,NC); tc.value={formula:`SUM(F${hdr+1}:F${hdr+n})`,result:sum}; tc.numFmt="#,##0.00"; tc.font={...font,bold:true}; tc.alignment={horizontal:"right",vertical:"middle"};
+  boxRange(tr);
 
   // --- Print setup ---
   ws.pageSetup.printTitlesRow=`${hdr}:${hdr}`;           // repeat table header on every page
-  ws.pageSetup.printArea=`A1:H${tr}`;
+  ws.pageSetup.printArea=`A1:F${tr}`;
   ws.headerFooter.oddFooter="&CPage &P of &N";
 
   const buf=await wb.xlsx.writeBuffer();
