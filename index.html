@@ -139,7 +139,7 @@ $("xlsx").onclick=async()=>{
   const ws=wb.addWorksheet("PO Items",{pageSetup:{
     paperSize:9, orientation:"portrait", fitToPage:true, fitToWidth:1, fitToHeight:0,
     horizontalCentered:true,
-    margins:{left:1,right:1,top:1,bottom:1,header:0.5,footer:0.5}
+    margins:{left:0.3937008,right:0.3937008,top:0.3937008,bottom:0.3937008,header:0.2,footer:0.2}   // 1.0 cm on every side (Excel stores inches)
   }});
   ws.columns=[{width:5},{width:12},{width:38},{width:11},{width:7},{width:6},{width:10},{width:11}];
   const thin={style:"thin",color:{argb:"FF000000"}};
