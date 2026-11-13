@@ -8,7 +8,7 @@
 <link rel="icon" href="icon-192.png">
 <meta name="theme-color" content="#0f7f8c">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js"></script>
 <style>
   :root{--bg:#f5f6f8;--card:#fff;--ink:#1c2430;--muted:#6b7686;--line:#e1e5ea;--accent:#0f7f8c;--ok:#1b7f3b;--bad:#b3261e}
   *{box-sizing:border-box}
@@ -131,29 +131,69 @@ const toAOA = () => [HEAD, ...items.map(i=>[+i.no||i.no,i.code,i.desc,i.date,i.q
 const baseName = () => (info["Order No."]||"PO").replace(/[\\/:*?"<>|]/g,"-");
 const statedNum = () => { const v=parseFloat(String(info["Stated Total (MYR)"]||"").replace(/,/g,"")); return isNaN(v)?"":v; };
 
-$("xlsx").onclick=()=>{
-  if(typeof XLSX==="undefined"){alert("Excel library did not load (check internet). Use Download CSV instead.");return;}
+$("xlsx").onclick=async()=>{
+  if(typeof ExcelJS==="undefined"){alert("Excel library did not load (check internet), then try again.");return;}
   if(!items.length){alert("No lines to export.");return;}
-  const n = items.length;
-  const top = [
-    ["Order No.", info["Order No."]],
-    ["PR No.", info["PR No."]],
-    ["Date", info["Date"]],
-    ["Subject", info["Subject"]],
-    ["Stated Total (MYR)", statedNum()],
-    []
-  ];
-  const first = top.length + 2;                 // first data row (1-based)
-  const aoa = [...top, ...toAOA()];
-  aoa.push([]);
-  aoa.push(["","","","","","","Total",{t:"n",f:`SUM(H${first}:H${first+n-1})`,v:items.reduce((s,i)=>s+(+i.amt||0),0)}]);
-  const ws = XLSX.utils.aoa_to_sheet(aoa);
-  ws["!cols"]=[{wch:20},{wch:30},{wch:58},{wch:14},{wch:10},{wch:7},{wch:16},{wch:16}];
-  const sc = ws["B5"]; if(sc && typeof sc.v==="number") sc.z="#,##0.00";
-  for(let r=first-1;r<=first+n+1;r++) ["G","H"].forEach(c=>{const cell=ws[c+r]; if(cell && cell.t==="n") cell.z="#,##0.00";});
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "PO Items");
-  XLSX.writeFile(wb, baseName()+".xlsx");
+  const n=items.length;
+  const wb=new ExcelJS.Workbook();
+  const ws=wb.addWorksheet("PO Items",{pageSetup:{
+    paperSize:9, orientation:"portrait", fitToPage:true, fitToWidth:1, fitToHeight:0,
+    horizontalCentered:true,
+    margins:{left:1,right:1,top:1,bottom:1,header:0.5,footer:0.5}
+  }});
+  ws.columns=[{width:5},{width:12},{width:38},{width:11},{width:7},{width:6},{width:10},{width:11}];
+  const thin={style:"thin",color:{argb:"FF000000"}};
+  const box={top:thin,left:thin,bottom:thin,right:thin};
+  const font={name:"Arial",size:10};
+  const boxRange=(r,c1,c2)=>{for(let c=c1;c<=c2;c++){const cell=ws.getCell(r,c);cell.border=box;if(!cell.font||!cell.font.bold)cell.font=font;}};
+
+  // --- PO details (boxed) ---
+  const st=parseFloat(String(info["Stated Total (MYR)"]||"").replace(/,/g,""));
+  const top=[["Order No.",info["Order No."]],["PR No.",info["PR No."]],["Date",info["Date"]],["Subject",info["Subject"]],["Stated Total (MYR)",isNaN(st)?"":st]];
+  top.forEach((t,i)=>{
+    const r=i+1;
+    ws.mergeCells(r,1,r,2); ws.mergeCells(r,3,r,8);
+    const l=ws.getCell(r,1); l.value=t[0]; l.font={...font,bold:true}; l.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFE9EDF1"}};
+    l.alignment={vertical:"middle"};
+    const v=ws.getCell(r,3); v.value=t[1]; v.alignment={horizontal:"left",vertical:"middle",wrapText:true};
+    if(typeof t[1]==="number") v.numFmt="#,##0.00";
+    boxRange(r,1,8);
+  });
+
+  // --- Items table (boxed) ---
+  const hdr=top.length+2;                       // one blank row between the blocks
+  HEAD.forEach((h,i)=>{
+    const c=ws.getCell(hdr,i+1); c.value=h;
+    c.font={...font,bold:true}; c.fill={type:"pattern",pattern:"solid",fgColor:{argb:"FFE9EDF1"}};
+    c.alignment={horizontal:"center",vertical:"middle",wrapText:true};
+  });
+  boxRange(hdr,1,8);
+  items.forEach((it,i)=>{
+    const r=hdr+1+i;
+    const vals=[+it.no||it.no,it.code,it.desc,it.date,+it.qty||0,it.uom,+it.price||0,+it.amt||0];
+    vals.forEach((v,j)=>{
+      const c=ws.getCell(r,j+1); c.value=v;
+      c.alignment={vertical:"top",wrapText:true,horizontal:(j===0||j===1||j===3||j===5)?"center":(j>=4&&j!==5?"right":"left")};
+    });
+    ws.getCell(r,5).numFmt="#,##0.##"; ws.getCell(r,7).numFmt="#,##0.00"; ws.getCell(r,8).numFmt="#,##0.00";
+    boxRange(r,1,8);
+  });
+  const tr=hdr+n+1, sum=items.reduce((s,i)=>s+(+i.amt||0),0);
+  ws.mergeCells(tr,1,tr,7);
+  const tl=ws.getCell(tr,1); tl.value="Total (MYR)"; tl.alignment={horizontal:"right",vertical:"middle"}; tl.font={...font,bold:true};
+  const tc=ws.getCell(tr,8); tc.value={formula:`SUM(H${hdr+1}:H${hdr+n})`,result:sum}; tc.numFmt="#,##0.00"; tc.font={...font,bold:true}; tc.alignment={horizontal:"right",vertical:"middle"};
+  boxRange(tr,1,8);
+  tl.font={...font,bold:true}; tc.font={...font,bold:true};
+
+  // --- Print setup ---
+  ws.pageSetup.printTitlesRow=`${hdr}:${hdr}`;           // repeat table header on every page
+  ws.pageSetup.printArea=`A1:H${tr}`;
+  ws.headerFooter.oddFooter="&CPage &P of &N";
+
+  const buf=await wb.xlsx.writeBuffer();
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+  a.download=baseName()+".xlsx"; a.click();
 };
 // ---------- PDF reading ----------
 function setStatus(t){$("status").textContent=t;}
