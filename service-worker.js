@@ -1,4 +1,4 @@
-const CACHE = "po-to-excel-v5";
+const CACHE = "po-to-excel-v6";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
@@ -8,18 +8,21 @@ self.addEventListener("activate", e => {
 });
 self.addEventListener("fetch", e => {
   const req = e.request, url = new URL(req.url);
-  if (req.method !== "GET" || url.hostname === "api.github.com") return;
-  // data.json: network first, fall back to cache
-  if (url.origin === location.origin && url.pathname.endsWith("/data.json")) {
-    e.respondWith(fetch(req).then(r => { const c = r.clone(); caches.open(CACHE).then(ca => ca.put("./data.json", c)); return r; })
-      .catch(() => caches.match("./data.json")));
+  if (req.method !== "GET") return;
+  const sameOrigin = url.origin === location.origin;
+  const cdn = url.hostname === "cdnjs.cloudflare.com";
+  if (!sameOrigin && !cdn) return;               // relay, NetSuite etc. go straight to the network
+  if (sameOrigin) {
+    // app files: network first (so updates show immediately), cache only when offline
+    e.respondWith(fetch(req, {cache: "no-cache"}).then(r => {
+      if (r.ok) { const c = r.clone(); caches.open(CACHE).then(ca => ca.put(req, c)); }
+      return r;
+    }).catch(() => caches.match(req, {ignoreSearch: true})));
     return;
   }
-  // everything else: cache first, then network (and cache libraries from CDN)
-  e.respondWith(caches.match(req, {ignoreSearch: true}).then(hit => hit || fetch(req).then(r => {
-    if (r.ok && (url.origin === location.origin || url.hostname === "cdnjs.cloudflare.com")) {
-      const c = r.clone(); caches.open(CACHE).then(ca => ca.put(req, c));
-    }
+  // libraries from cdnjs: cache first
+  e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(r => {
+    if (r.ok) { const c = r.clone(); caches.open(CACHE).then(ca => ca.put(req, c)); }
     return r;
   })));
 });
