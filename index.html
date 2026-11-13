@@ -13,315 +13,171 @@
   :root{--bg:#f5f6f8;--card:#fff;--ink:#1c2430;--muted:#6b7686;--line:#e1e5ea;--accent:#0f7f8c;--ok:#1b7f3b;--bad:#b3261e}
   *{box-sizing:border-box}
   body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--ink)}
-  header{padding:12px 20px;background:var(--accent);color:#fff;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-  header h1{margin:0;font-size:19px;flex:1}
-  header .sync{font-size:12px;opacity:.95}
-  header button{background:rgba(255,255,255,.18);padding:7px 12px;font-size:13px}
-  .layout{display:grid;grid-template-columns:270px 1fr;gap:16px;max-width:1400px;margin:0 auto;padding:16px}
-  @media(max-width:820px){.layout{grid-template-columns:1fr}}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
-  #list{max-height:70vh;overflow:auto;margin-top:8px}
-  .po{padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:13px}
-  .po:hover{background:#f0f7f8}.po.sel{border-color:var(--accent);background:#eaf7f8}
-  .po b{display:block}.po span{color:var(--muted);font-size:12px}
-  #search{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:13px}
-  #drop{border:2px dashed #aab4c0;border-radius:10px;padding:18px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s;font-size:14px}
+  header{padding:18px 24px;background:var(--accent);color:#fff}
+  header h1{margin:0;font-size:20px}
+  header p{margin:4px 0 0;font-size:13px;opacity:.9}
+  main{max-width:1200px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+  #drop{border:2px dashed #aab4c0;border-radius:10px;padding:26px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s}
   #drop.over{border-color:var(--accent);background:#eaf7f8;color:var(--accent)}
   #drop strong{color:var(--ink)}
-  .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px}
+  .info{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 20px}
   .info label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
   .info input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:14px}
-  .bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
-  button{padding:9px 14px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-weight:600;cursor:pointer;font-size:14px}
+  .bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+  button{padding:9px 16px;border:0;border-radius:8px;background:var(--accent);color:#fff;font:inherit;font-weight:600;cursor:pointer}
   button.sec{background:#fff;color:var(--accent);border:1px solid var(--accent)}
-  button.danger{background:#fff;color:var(--bad);border:1px solid var(--bad)}
-  button:hover{filter:brightness(.93)}button:disabled{opacity:.5;cursor:not-allowed}
-  .status{font-size:13px;color:var(--muted);margin-top:8px}
+  button:hover{filter:brightness(.93)}
+  .status{font-size:13px;color:var(--muted)}
   .check{font-size:13px;font-weight:600}
   .ok{color:var(--ok)}.bad{color:var(--bad)}
-  .wrap{overflow:auto;max-height:62vh;border:1px solid var(--line);border-radius:8px}
+  .wrap{overflow:auto;max-height:65vh;border:1px solid var(--line);border-radius:8px}
   table{border-collapse:collapse;width:100%;font-size:13px}
   th{position:sticky;top:0;background:#e9edf1;text-align:left;padding:8px;white-space:nowrap;z-index:1}
-  td{padding:3px 6px;border-top:1px solid var(--line)}
+  td{padding:4px 8px;border-top:1px solid var(--line)}
   td.n,th.n{text-align:right}
   td input{width:100%;border:1px solid transparent;background:transparent;font:inherit;font-size:13px;padding:3px 4px;border-radius:4px}
   td input:focus{border-color:var(--accent);background:#fff;outline:0}
   td input.n{text-align:right}
   tfoot td{font-weight:700;background:#f3f5f7}
   .del{background:none;color:var(--bad);padding:0 6px;font-size:16px}
-  dialog{border:0;border-radius:12px;padding:20px;max-width:460px;width:92%;box-shadow:0 10px 40px rgba(0,0,0,.25)}
-  dialog::backdrop{background:rgba(0,0,0,.4)}
-  dialog h2{margin:0 0 4px;font-size:18px}
-  dialog p{font-size:12.5px;color:var(--muted);margin:4px 0 12px}
-  dialog label{display:block;font-size:12px;color:var(--muted);margin-top:10px}
-  dialog input{width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;font:inherit}
-  .row{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
 </style>
 </head>
 <body>
 <header>
   <h1>PO to Excel</h1>
-  <span class="sync" id="sync"></span>
-  <button id="install" hidden>Install app</button>
-  <button id="settings">GitHub settings</button>
+  <p>Paste a Purchase Order link to pull out its line items, check them, then download as Excel.</p>
 </header>
-
-<div class="layout">
-  <aside>
-    <div class="card">
-      <b style="font-size:14px">Saved POs</b>
-      <input id="search" placeholder="Search order no. / subject / supplier" style="margin-top:8px">
-      <div id="list"></div>
+<main>
+  <div class="card">
+    <label style="font-size:12px;color:var(--muted)">Paste the PO link here</label>
+    <input id="link" placeholder="https://....extforms.netsuite.com/app/site/hosting/scriptlet.nl?..." style="width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:inherit;margin:4px 0 12px">
+    <div id="drop"><strong>If the link cannot be opened, drop the PO PDF here</strong> or click to choose<br><span style="font-size:12px">Works with the SKOM purchase order layout.</span>
+      <input id="file" type="file" accept="application/pdf" hidden>
     </div>
-  </aside>
+    <div class="status" id="status" style="margin-top:8px"></div>
+  </div>
 
-  <main>
-    <div class="card">
-      <div id="drop"><strong>Drop a new PO PDF here</strong> or click to choose
-        <input id="file" type="file" accept="application/pdf" hidden>
-      </div>
-      <div class="status" id="status"></div>
+  <div class="card"><div class="info" id="info"></div></div>
+
+  <div class="card">
+    <div class="bar">
+      <button id="xlsx">Download Excel (.xlsx)</button>
+      
+      
+      
+      
+      <span class="check" id="check"></span>
     </div>
-
-    <div class="card"><div class="info" id="info"></div></div>
-
-    <div class="card">
-      <div class="bar">
-        <button id="xlsx">Download Excel</button>
-        <button class="sec" id="csv">CSV</button>
-        <button class="sec" id="copy">Copy for Excel</button>
-        <button class="sec" id="add">+ Add row</button>
-        <button class="sec" id="newpo">New PO</button>
-        <button id="save">Save to GitHub</button>
-        <button class="danger" id="delpo">Delete PO</button>
-        <span class="check" id="check"></span>
-      </div>
-      <div class="wrap">
-        <table>
-          <thead><tr>
-            <th>No.</th><th>Item Code</th><th>Description</th><th>Delivery Date</th>
-            <th class="n">Qty</th><th>UOM</th><th class="n">Unit Price (MYR)</th><th class="n">Amount (MYR)</th><th></th>
-          </tr></thead>
-          <tbody id="rows"></tbody>
-          <tfoot><tr><td colspan="7" class="n">Total</td><td class="n" id="tot">0.00</td><td></td></tr></tfoot>
-        </table>
-      </div>
+    <div class="wrap">
+      <table>
+        <thead><tr>
+          <th>No.</th><th>Item Code</th><th>Description</th><th>Delivery Date</th>
+          <th class="n">Qty</th><th>UOM</th><th class="n">Unit Price (MYR)</th><th class="n">Amount (MYR)</th>
+        </tr></thead>
+        <tbody id="rows"></tbody>
+        <tfoot><tr><td colspan="7" class="n">Total</td><td class="n" id="tot">0.00</td></tr></tfoot>
+      </table>
     </div>
-  </main>
-</div>
-
-<dialog id="dlg">
-  <h2>GitHub settings</h2>
-  <p>Admin only. Everyone else can open the app and view and download saved POs without these. The token stays on this device only.</p>
-  <label>Owner (user or organisation)</label><input id="g_owner" placeholder="your-github-name">
-  <label>Repository</label><input id="g_repo" placeholder="po-to-excel">
-  <label>Branch</label><input id="g_branch" placeholder="main">
-  <label>Personal access token (Contents: read &amp; write)</label><input id="g_token" type="password" placeholder="github_pat_...">
-  <div class="row"><button class="sec" id="g_cancel">Cancel</button><button id="g_save">Save &amp; reload</button></div>
-</dialog>
+  </div>
+</main>
 
 <script>
 const $ = id => document.getElementById(id);
 const fmt = n => (Number(n)||0).toLocaleString("en-MY",{minimumFractionDigits:2,maximumFractionDigits:2});
 const esc = s => String(s??"").replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
-const DATA_PATH = "data.json";
+const blankInfo = () => ({"Supplier":"","Supplier ID":"","Order No.":"","PR No.":"","Date":"","Subject":"",
+  "Project No / Contract No":"","Incoterms":"","Payment Term":"","Deliver To":"","Stated Total (MYR)":""});
+let info = blankInfo(), items = [];
 
-const blankInfo=()=>({"Supplier":"","Supplier ID":"","Order No.":"","PR No.":"","Date":"","Subject":"","Project No / Contract No":"","Incoterms":"","Payment Term":"","Deliver To":"","Stated Total (MYR)":""});
-// ---------------- State ----------------
-let db = {pos:[]};          // all saved POs
-let sha = null;             // sha of data.json on GitHub (admin only)
-let cur = {id:"",info:blankInfo(),items:[]};   // PO on screen
-let dirty = false;
-
-function getGh(){ try{return JSON.parse(localStorage.getItem("gh")||"{}");}catch(e){return {};} }
-function setGh(v){ try{localStorage.setItem("gh",JSON.stringify(v));}catch(e){} }
-const canWrite = () => { const g=getGh(); return !!(g.owner&&g.repo&&g.token); };
-
-// ---------------- GitHub storage ----------------
-const b64enc = s => btoa(unescape(encodeURIComponent(s)));
-const b64dec = s => decodeURIComponent(escape(atob(s.replace(/\n/g,""))));
-function ghUrl(g){ return `https://api.github.com/repos/${g.owner}/${g.repo}/contents/${DATA_PATH}`; }
-function ghHeaders(g){ return {"Authorization":"Bearer "+g.token,"Accept":"application/vnd.github+json"}; }
-
-async function fetchRemote(){
-  const g=getGh();
-  if(canWrite()){
-    const r = await fetch(ghUrl(g)+"?ref="+encodeURIComponent(g.branch||"main")+"&t="+Date.now(),{headers:ghHeaders(g),cache:"no-store"});
-    if(r.status===404){ sha=null; return {pos:[]}; }
-    if(!r.ok) throw new Error("GitHub "+r.status+" "+(await r.text()).slice(0,120));
-    const j=await r.json(); sha=j.sha; return JSON.parse(b64dec(j.content));
-  }
-  const r = await fetch(DATA_PATH+"?t="+Date.now(),{cache:"no-store"});
-  if(!r.ok) throw new Error("data.json "+r.status);
-  return await r.json();
-}
-async function loadDb(){
-  setSync("Loading…");
-  try{
-    db = await fetchRemote();
-    try{localStorage.setItem("dbcache",JSON.stringify(db));}catch(e){}
-    setSync(canWrite()?"Connected to GitHub (can save)":"Read-only (no token on this device)");
-  }catch(e){
-    console.warn(e);
-    try{db=JSON.parse(localStorage.getItem("dbcache")||'{"pos":[]}');}catch(_){db={pos:[]};}
-    setSync("Offline / cannot reach data: showing last copy. "+e.message);
-  }
-  if(!db.pos) db.pos=[];
-}
-async function saveToGithub(){
-  const g=getGh();
-  if(!canWrite()){ openSettings(); return; }
-  if(!cur.items.length){ alert("Nothing to save."); return; }
-  const orderNo = (cur.info["Order No."]||"").trim();
-  if(!orderNo){ alert("Please fill in Order No. first."); return; }
-  setSync("Saving…");
-  try{
-    const remote = await fetchRemote();           // always merge onto latest
-    const id = orderNo.replace(/[^\w\-]+/g,"-");
-    const po = {id,orderNo,savedAt:new Date().toISOString(),info:cur.info,items:cur.items};
-    const i = remote.pos.findIndex(p=>p.id===id);
-    if(i>=0) remote.pos[i]=po; else remote.pos.unshift(po);
-    await putDb(remote,g,"Save "+orderNo);
-    db=remote; cur.id=id; dirty=false; renderList();
-    setSync("Saved to GitHub ✓ "+new Date().toLocaleTimeString());
-  }catch(e){ setSync("Save failed: "+e.message); alert("Save failed: "+e.message); }
-}
-async function putDb(data,g,msg){
-  const body={message:msg,content:b64enc(JSON.stringify(data,null,1)),branch:g.branch||"main"};
-  if(sha) body.sha=sha;
-  const r=await fetch(ghUrl(g),{method:"PUT",headers:{...ghHeaders(g),"Content-Type":"application/json"},body:JSON.stringify(body)});
-  if(!r.ok) throw new Error("GitHub "+r.status+" "+(await r.text()).slice(0,160));
-  sha=(await r.json()).content.sha;
-  try{localStorage.setItem("dbcache",JSON.stringify(data));}catch(e){}
-}
-async function deletePo(){
-  if(!cur.id){ alert("This PO has not been saved yet."); return; }
-  if(!canWrite()){ openSettings(); return; }
-  if(!confirm("Delete "+cur.info["Order No."]+" from GitHub?")) return;
-  try{
-    const remote=await fetchRemote();
-    remote.pos=remote.pos.filter(p=>p.id!==cur.id);
-    await putDb(remote,getGh(),"Delete "+cur.info["Order No."]);
-    db=remote; cur={id:"",info:{},items:[]}; renderAll(); setSync("Deleted ✓");
-  }catch(e){ alert("Delete failed: "+e.message); }
-}
-function setSync(t){ $("sync").textContent=t; }
-function setStatus(t){ $("status").textContent=t; }
-
-// ---------------- Rendering ----------------
-function renderList(){
-  const q=$("search").value.toLowerCase();
-  const rows=db.pos.filter(p=>!q||[p.orderNo,p.info?.Subject,p.info?.Supplier].join(" ").toLowerCase().includes(q));
-  $("list").innerHTML = rows.length ? rows.map(p=>{
-    const tot=p.items.reduce((s,i)=>s+(+i.amt||0),0);
-    return `<div class="po ${p.id===cur.id?"sel":""}" data-id="${esc(p.id)}"><b>${esc(p.orderNo)}</b><span>${esc(p.info?.Subject||"")} · ${esc(p.info?.Supplier||"")}<br>${p.items.length} lines · MYR ${fmt(tot)}</span></div>`;
-  }).join("") : '<div class="status">No saved POs yet.</div>';
-  $("list").querySelectorAll(".po").forEach(d=>d.onclick=()=>{
-    if(dirty && !confirm("Discard unsaved changes?")) return;
-    const p=db.pos.find(x=>x.id===d.dataset.id); if(!p) return;
-    cur=JSON.parse(JSON.stringify({id:p.id,info:p.info,items:p.items})); dirty=false; renderAll();
-    setStatus("Opened "+p.orderNo+". Saved "+new Date(p.savedAt).toLocaleString());
-  });
-}
 function renderInfo(){
-  $("info").innerHTML = Object.keys(cur.info).map(k=>
-    `<div><label>${esc(k)}</label><input data-k="${esc(k)}" value="${esc(cur.info[k])}"></div>`).join("");
-  $("info").querySelectorAll("input").forEach(i=>i.oninput=()=>{cur.info[i.dataset.k]=i.value;dirty=true;updateTotals();});
+  $("info").innerHTML = Object.keys(info).map(k=>`<div><label>${esc(k)}</label><input data-k="${esc(k)}" value="${esc(info[k])}"></div>`).join("");
+  $("info").querySelectorAll("input").forEach(i=>i.oninput=()=>{info[i.dataset.k]=i.value;updateTotals();});
 }
 function renderRows(){
-  $("rows").innerHTML = cur.items.map((it,i)=>`<tr>
+  $("rows").innerHTML = items.map((it,i)=>`<tr>
     <td><input data-i="${i}" data-f="no" value="${esc(it.no)}" style="width:44px"></td>
     <td><input data-i="${i}" data-f="code" value="${esc(it.code)}" style="width:100px"></td>
-    <td><input data-i="${i}" data-f="desc" value="${esc(it.desc)}" style="min-width:300px"></td>
+    <td><input data-i="${i}" data-f="desc" value="${esc(it.desc)}" style="min-width:320px"></td>
     <td><input data-i="${i}" data-f="date" value="${esc(it.date)}" style="width:86px"></td>
     <td><input class="n" data-i="${i}" data-f="qty" value="${esc(it.qty)}" style="width:60px"></td>
     <td><input data-i="${i}" data-f="uom" value="${esc(it.uom)}" style="width:50px"></td>
     <td><input class="n" data-i="${i}" data-f="price" value="${esc(it.price)}" style="width:80px"></td>
-    <td><input class="n" data-i="${i}" data-f="amt" value="${esc(it.amt)}" style="width:90px"></td>
-    <td><button class="del" data-del="${i}" title="Delete row">×</button></td></tr>`).join("");
+    <td><input class="n" data-i="${i}" data-f="amt" value="${esc(it.amt)}" style="width:90px"></td></tr>`).join("");
   $("rows").querySelectorAll("input").forEach(inp=>inp.oninput=()=>{
-    const it=cur.items[inp.dataset.i], f=inp.dataset.f;
+    const it=items[inp.dataset.i], f=inp.dataset.f;
     it[f] = ["qty","price","amt"].includes(f) ? parseFloat(String(inp.value).replace(/,/g,""))||0 : inp.value;
-    dirty=true; updateTotals();
+    updateTotals();
   });
-  $("rows").querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{cur.items.splice(+b.dataset.del,1);dirty=true;renderRows();});
   updateTotals();
 }
 function updateTotals(){
-  const sum=cur.items.reduce((s,i)=>s+(+i.amt||0),0);
-  $("tot").textContent=fmt(sum);
-  const stated=parseFloat(String(cur.info["Stated Total (MYR)"]||"").replace(/,/g,""));
-  const lineErr=cur.items.filter(i=>Math.abs(i.qty*i.price-i.amt)>0.011).length;
-  let msg=`${cur.items.length} lines`, cls="ok";
+  const sum = items.reduce((s,i)=>s+(+i.amt||0),0);
+  $("tot").textContent = fmt(sum);
+  const stated = parseFloat(String(info["Stated Total (MYR)"]||"").replace(/,/g,""));
+  const lineErr = items.filter(i=>Math.abs(i.qty*i.price-i.amt)>0.011).length;
+  let msg = `${items.length} lines`, cls = "ok";
   if(!isNaN(stated)){
-    if(Math.abs(stated-sum)<0.01) msg+=` · total matches PO (${fmt(stated)})`;
-    else{msg+=` · total ${fmt(sum)} does NOT match PO ${fmt(stated)}`;cls="bad";}
+    if(Math.abs(stated-sum)<0.01) msg += ` · total matches PO (${fmt(stated)})`;
+    else {msg += ` · total ${fmt(sum)} does NOT match PO ${fmt(stated)}`; cls="bad";}
   }
-  if(lineErr){msg+=` · ${lineErr} line(s) where qty × price ≠ amount`;cls="bad";}
-  $("check").textContent=msg; $("check").className="check "+cls;
+  if(lineErr){msg += ` · ${lineErr} line(s) where qty × price ≠ amount`; cls="bad";}
+  $("check").textContent = msg; $("check").className = "check "+cls;
 }
-function renderAll(){ renderList(); renderInfo(); renderRows(); }
-$("search").oninput=renderList;
-$("add").onclick=()=>{cur.items.push({no:cur.items.length+1,code:"",desc:"",date:"",qty:0,uom:"PCS",price:0,amt:0});dirty=true;renderRows();};
-$("newpo").onclick=()=>{ if(dirty && !confirm("Discard unsaved changes?")) return; cur={id:"",info:blankInfo(),items:[]}; dirty=false; renderAll(); setStatus("New empty PO."); };
-$("save").onclick=saveToGithub;
-$("delpo").onclick=deletePo;
 
-// ---------------- Export ----------------
-const HEAD=["No.","Item Code","Description","Delivery Date","Quantity","UOM","Unit Price (MYR)","Amount (MYR)"];
-const toAOA=()=>[HEAD,...cur.items.map(i=>[+i.no||i.no,i.code,i.desc,i.date,i.qty,i.uom,i.price,i.amt])];
-const baseName=()=>(cur.info["Order No."]||"PO").replace(/[\\/:*?"<>|]/g,"-");
+// ---------- Export ----------
+const HEAD = ["No.","Item Code","Description","Delivery Date","Quantity","UOM","Unit Price (MYR)","Amount (MYR)"];
+const toAOA = () => [HEAD, ...items.map(i=>[+i.no||i.no,i.code,i.desc,i.date,i.qty,i.uom,i.price,i.amt])];
+const baseName = () => (info["Order No."]||"PO").replace(/[\\/:*?"<>|]/g,"-");
+const statedNum = () => { const v=parseFloat(String(info["Stated Total (MYR)"]||"").replace(/,/g,"")); return isNaN(v)?"":v; };
+
 $("xlsx").onclick=()=>{
-  if(typeof XLSX==="undefined"){alert("Excel library not loaded yet (needs internet once). Use CSV instead.");return;}
-  if(!cur.items.length){alert("No lines to export.");return;}
-  const n=cur.items.length, I=cur.info;
-  const st=parseFloat(String(I["Stated Total (MYR)"]||"").replace(/,/g,""));
-  const top=[["Order No.",I["Order No."]],["PR No.",I["PR No."]],["Date",I["Date"]],["Subject",I["Subject"]],["Stated Total (MYR)",isNaN(st)?"":st],[]];
-  const first=top.length+2;
-  const aoa=[...top,...toAOA()];
-  aoa.push([]); aoa.push(["","","","","","","Total",{t:"n",f:`SUM(H${first}:H${first+n-1})`,v:cur.items.reduce((s,i)=>s+(+i.amt||0),0)}]);
-  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  if(typeof XLSX==="undefined"){alert("Excel library did not load (check internet). Use Download CSV instead.");return;}
+  if(!items.length){alert("No lines to export.");return;}
+  const n = items.length;
+  const top = [
+    ["Order No.", info["Order No."]],
+    ["PR No.", info["PR No."]],
+    ["Date", info["Date"]],
+    ["Subject", info["Subject"]],
+    ["Stated Total (MYR)", statedNum()],
+    []
+  ];
+  const first = top.length + 2;                 // first data row (1-based)
+  const aoa = [...top, ...toAOA()];
+  aoa.push([]);
+  aoa.push(["","","","","","","Total",{t:"n",f:`SUM(H${first}:H${first+n-1})`,v:items.reduce((s,i)=>s+(+i.amt||0),0)}]);
+  const ws = XLSX.utils.aoa_to_sheet(aoa);
   ws["!cols"]=[{wch:20},{wch:30},{wch:58},{wch:14},{wch:10},{wch:7},{wch:16},{wch:16}];
-  if(ws["B5"]&&typeof ws["B5"].v==="number")ws["B5"].z="#,##0.00";
-  for(let r=first-1;r<=first+n+1;r++)["G","H"].forEach(c=>{const cell=ws[c+r];if(cell&&cell.t==="n")cell.z="#,##0.00";});
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,"PO Items");
-  XLSX.writeFile(wb,baseName()+".xlsx");
+  const sc = ws["B5"]; if(sc && typeof sc.v==="number") sc.z="#,##0.00";
+  for(let r=first-1;r<=first+n+1;r++) ["G","H"].forEach(c=>{const cell=ws[c+r]; if(cell && cell.t==="n") cell.z="#,##0.00";});
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "PO Items");
+  XLSX.writeFile(wb, baseName()+".xlsx");
 };
-$("csv").onclick=()=>{
-  const q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(new Blob(["﻿"+[["Order No.",cur.info["Order No."]],["PR No.",cur.info["PR No."]],["Date",cur.info["Date"]],["Subject",cur.info["Subject"]],["Stated Total (MYR)",cur.info["Stated Total (MYR)"]],[],...toAOA()].map(r=>r.map(q).join(",")).join("\r\n")],{type:"text/csv;charset=utf-8"}));
-  a.download=baseName()+".csv"; a.click();
-};
-$("copy").onclick=async()=>{
-  const tsv=toAOA().map(r=>r.map(v=>String(v??"").replace(/[\t\r\n]+/g," ")).join("\t")).join("\n");
-  try{await navigator.clipboard.writeText(tsv);setStatus("Copied. Paste into Excel with Ctrl+V.");}
-  catch(e){setStatus("Copy blocked by browser. Use the Excel download instead.");}
-};
-
-// ---------------- PDF reading ----------------
+// ---------- PDF reading ----------
+function setStatus(t){$("status").textContent=t;}
 const drop=$("drop"), file=$("file");
 drop.onclick=()=>file.click();
 file.onchange=()=>file.files[0]&&readPdf(file.files[0]);
 ["dragenter","dragover"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.add("over");}));
 ["dragleave","drop"].forEach(e=>drop.addEventListener(e,ev=>{ev.preventDefault();drop.classList.remove("over");}));
-drop.addEventListener("drop",ev=>{const f=ev.dataTransfer.files[0];if(f)readPdf(f);});
+drop.addEventListener("drop",ev=>{const f=ev.dataTransfer.files[0]; if(f) readPdf(f);});
 
-async function readPdf(f){
-  if(typeof pdfjsLib==="undefined"){setStatus("PDF reader not loaded yet (needs internet once).");return;}
-  if(dirty && !confirm("Discard unsaved changes?")) return;
+async function readPdf(f){ await readPdfData(await f.arrayBuffer(), f.name); }
+async function readPdfData(buf,name){
+  if(typeof pdfjsLib==="undefined"){setStatus("PDF reader did not load (check internet).");return;}
   pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  setStatus("Reading "+f.name+" ...");
+  setStatus("Reading "+name+" ...");
   try{
-    const pdf=await pdfjsLib.getDocument({data:await f.arrayBuffer()}).promise;
+    const pdf = await pdfjsLib.getDocument({data:buf}).promise;
     const lines=[];
     for(let p=1;p<=pdf.numPages;p++){
-      const tc=await (await pdf.getPage(p)).getTextContent();
+      const tc = await (await pdf.getPage(p)).getTextContent();
       const buckets=[];
       tc.items.forEach(t=>{
-        if(!t.str.trim())return;
-        const y=t.transform[5],x=t.transform[4];
+        if(!t.str.trim()) return;
+        const y=t.transform[5], x=t.transform[4];
         let b=buckets.find(b=>Math.abs(b.y-y)<3);
         if(!b){b={y,parts:[]};buckets.push(b);}
         b.parts.push({x,s:t.str});
@@ -338,24 +194,22 @@ function parseLines(lines){
   const rowRe=/^(\d{1,3})\s+(\d{7,})\s+(.*?)\s*(\d{2}\/\d{2}\/\d{4})\s+([\d,]+(?:\.\d+)?)\s+([A-Za-z]+)\s+MYR\s*([\d,]+\.\d{2})\s+MYR\s*([\d,]+\.\d{2})$/;
   const stop=/^(Purchase\/|Currency|Payment Term|Deliver To|Subtotal|Tax Total|Total|This Purchase Order|1\. |2\. |- - -|_ _)/i;
   const junk=/^(SKOM SDN|BO3-B|NO\. 3 JALAN|KUALA LUMPUR|MALAYSIA|6087|No\. Item Code|\(DD\/MM|\(MYR\)|ISO |bsi|FS B|EMS B|OHS B|\d+ of \d+|CERTIFIED)/i;
-  const out=[];let last=null,lastY=0,lastPage=0,ended=false;
+  const out=[]; let last=null, lastY=0, lastPage=0, ended=false;
   lines.forEach(l=>{
     const m=l.text.match(rowRe);
     if(m){
       last={no:+m[1],code:m[2],desc:m[3].trim(),date:m[4],qty:parseFloat(m[5].replace(/,/g,"")),uom:m[6],
             price:parseFloat(m[7].replace(/,/g,"")),amt:parseFloat(m[8].replace(/,/g,""))};
-      out.push(last);lastY=l.y;lastPage=l.page;ended=false;return;
+      out.push(last); lastY=l.y; lastPage=l.page; ended=false; return;
     }
     if(stop.test(l.text)){ended=true;return;}
-    if(junk.test(l.text)||ended||!last)return;
-    if(l.page===lastPage&&lastY-l.y<20&&lastY-l.y>0){last.desc=(last.desc+" "+l.text).trim();lastY=l.y;}
+    if(junk.test(l.text)||ended||!last) return;
+    if(l.page===lastPage && lastY-l.y<20 && lastY-l.y>0){ last.desc=(last.desc+" "+l.text).trim(); lastY=l.y; }
   });
   if(!out.length){setStatus("No line items found. This layout may be different from the SKOM PO format.");return;}
   const all=lines.map(l=>l.text).join("\n");
   const g=re=>{const m=all.match(re);return m?m[1].trim():"";};
-  const info={"Supplier":"","Supplier ID":"","Order No.":"","Date":"","PR No.":"","Subject":"","Project No / Contract No":"",
-              "Incoterms":"","Payment Term":"","Deliver To":"","Stated Total (MYR)":""};
-  const set=(k,v)=>{if(v)info[k]=v;};
+  const ni=blankInfo(); const set=(k,v)=>{if(v) ni[k]=v;};
   set("Order No.",g(/Order No\.?\s*:?\s*(PO-[\w\-\/]+)/i));
   set("PR No.",g(/PR No\.?\s*:?\s*([\w\-]+)/i));
   set("Date",g(/\bDate\s*:?\s*(\d{2}\/\d{2}\/\d{4})/i));
@@ -365,40 +219,34 @@ function parseLines(lines){
   set("Project No / Contract No",g(/Project No[^:\n]*:?\s*([^\n]+)/i));
   set("Incoterms",g(/Incoterms\s*:?\s*([^\n]+)/i));
   const sup=g(/Supplier Address\s*:?\s*\n?\s*([^\n]+)/i);
-  if(sup&&!/Attention/i.test(sup))set("Supplier",sup.replace(/\s*(Order No|Date).*$/i,""));
+  if(sup&&!/Attention/i.test(sup)) set("Supplier",sup.replace(/\s*(Order No|Date).*$/i,""));
   set("Stated Total (MYR)",g(/Total\s*:\s*MYR\s*([\d,]+\.\d{2})/i).replace(/,/g,""));
-  cur={id:"",info,items:out};dirty=true;renderAll();
-  setStatus(`Read ${out.length} lines. Please check the header fields and rows (fill in Supplier if blank), then Save to GitHub or download.`);
+  info=ni; items=out; renderInfo(); renderRows();
+  setStatus(`Read ${out.length} lines. Please check the header fields and rows, then download.`);
 }
 
-// ---------------- Settings ----------------
-function openSettings(){
-  const g=getGh();
-  $("g_owner").value=g.owner||"";$("g_repo").value=g.repo||"";$("g_branch").value=g.branch||"main";$("g_token").value=g.token||"";
-  $("dlg").showModal();
+// ---------- Load from pasted link ----------
+async function loadLink(url){
+  url=url.trim(); if(!/^https?:\/\//i.test(url)) return;
+  setStatus("Fetching the PO from the link ...");
+  try{
+    const r=await fetch(url,{credentials:"omit"});
+    if(!r.ok) throw new Error("HTTP "+r.status);
+    const buf=await r.arrayBuffer();
+    const head=new TextDecoder().decode(buf.slice(0,5));
+    if(head.startsWith("%PDF")){ await readPdfData(buf,"the link"); return; }
+    throw new Error("the link did not return a PDF");
+  }catch(e){
+    console.warn(e);
+    setStatus("Could not read the link ("+e.message+"). Browsers often block this for other websites. Open the link, save the PDF, then drop it in the box below.");
+  }
 }
-$("settings").onclick=openSettings;
-$("g_cancel").onclick=()=>$("dlg").close();
-$("g_save").onclick=async()=>{
-  setGh({owner:$("g_owner").value.trim(),repo:$("g_repo").value.trim(),branch:$("g_branch").value.trim()||"main",token:$("g_token").value.trim()});
-  $("dlg").close();await loadDb();renderList();
-};
+$("link").addEventListener("paste",ev=>{ const t=(ev.clipboardData||window.clipboardData).getData("text"); setTimeout(()=>loadLink(t),0); });
+$("link").addEventListener("keydown",ev=>{ if(ev.key==="Enter") loadLink($("link").value); });
 
-// ---------------- Install + service worker ----------------
-let deferred=null;
-window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferred=e;$("install").hidden=false;});
-$("install").onclick=async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;$("install").hidden=true;};
-window.addEventListener("appinstalled",()=>{$("install").hidden=true;});
-window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue="";}});
+renderInfo(); renderRows();
+setStatus("Paste the PO link above to begin.");
 if("serviceWorker" in navigator) navigator.serviceWorker.register("service-worker.js").catch(()=>{});
-
-// ---------------- Start ----------------
-(async()=>{
-  await loadDb();
-  if(db.pos.length){const p=db.pos[0];cur=JSON.parse(JSON.stringify({id:p.id,info:p.info,items:p.items}));}
-  renderAll();
-  setStatus(db.pos.length?"Opened the latest saved PO. Drop a PDF to add another.":"No saved POs yet. Drop a PO PDF to start.");
-})();
 </script>
 </body>
 </html>
